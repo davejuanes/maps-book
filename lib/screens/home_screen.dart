@@ -22,13 +22,18 @@ class HomeScreen extends StatelessWidget {
 
   Future<void> _showButtom(BuildContext context) {
     return showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
-      builder: (context) => Container(
-        width: MediaQuery.of(context).size.width,
-        height: 500,
-        color: Colors.white,
-        child: Text("Hola"),
-      )
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: 600,
+          child: const RecipeForm(),
+        ),
+      ),
     );
   }
 
@@ -72,6 +77,128 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+    );
+  }
+}
+
+class RecipeForm extends StatelessWidget {
+  const RecipeForm({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final _formKey = GlobalKey<FormState>();
+    final TextEditingController _roadName = TextEditingController();
+    final TextEditingController _authorName = TextEditingController();
+    final TextEditingController _imageUrl = TextEditingController();
+    final TextEditingController _description = TextEditingController();
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Add New Road', 
+            style: TextStyle(
+              color: Colors.blueGrey,
+              fontSize: 24,
+            ),),
+            SizedBox(height: 16,),
+            _buildTextField(controller: _roadName, label: 'Road Name',
+              validator: (value) {
+                if (value == null ||value.isEmpty) {
+                  return 'Please enter the road name';
+                }
+                return null;
+              }
+            ),
+            SizedBox(height: 16,),
+            _buildTextField(controller: _authorName, label: 'Author Name',
+              validator: (value) {
+                if (value == null ||value.isEmpty) {
+                  return 'Please enter the author name';
+                }
+                return null;
+              }
+            ),
+            SizedBox(height: 16,),
+            _buildTextField(controller: _imageUrl, label: 'Image URL',
+              validator: (value) {
+                if (value == null ||value.isEmpty) {
+                  return 'Please enter the image url';
+                }
+                return null;
+              }
+            ),
+            SizedBox(height: 16,),
+            _buildTextField(
+              maxLines: 4,
+              controller: _description,
+              label: 'Description',
+              validator: (value) {
+                if (value == null ||value.isEmpty) {
+                  return 'Please enter the road description';
+                }
+                return null;
+              }
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()){
+                    Navigator.pop(context);
+                  }
+                }
+                ,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)
+                  )
+                ),
+                child: 
+                  Text(
+                    'Save Road',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16, fontWeight: FontWeight.bold,
+                    ),
+                ),
+              ),
+            )
+          ],
+        ),  
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    required String? Function(String?) validator,
+    int maxLines = 1
+    }) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          fontFamily: 'Quicksand',
+          color: Colors.blueGrey
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey, width: 1),
+          borderRadius: BorderRadius.circular(10)
+        )
+      ),
+      validator: validator,
+      maxLines: maxLines,
     );
   }
 }
